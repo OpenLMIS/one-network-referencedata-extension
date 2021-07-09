@@ -15,33 +15,21 @@
 
 package org.openlmis.referencedata.domain;
 
-import org.openlmis.referencedata.extension.point.OrderableCreatePostProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
-@Component(value = "OrderableCreateEvent")
-public class OrderableCreateEvent implements OrderableCreatePostProcessor {
+public class ProductsObserver implements PropertyChangeListener {
   private Orderable orderable;
-  private PropertyChangeSupport support;
-  private final Logger logger = LoggerFactory.getLogger(getClass());
 
-  public OrderableCreateEvent() {
-    support = new PropertyChangeSupport(this);
+  public void propertyChange(PropertyChangeEvent evt) {
+    this.setProduct((Orderable) evt.getNewValue());
   }
 
-  @Override
-  public void process(Orderable orderable) {
-    logger.info("OrderableCreateEvent - processing");
-    support.firePropertyChange("orderableCreate", this.orderable, orderable);
+  public Orderable getProduct() {
+    return orderable;
+  }
+
+  public void setProduct(Orderable orderable) {
     this.orderable = orderable;
-  }
-
-  public void addPropertyChangeListener(PropertyChangeListener pcl) {
-    logger.info("OrderableCreateEvent - adding listener");
-    support.addPropertyChangeListener(pcl);
   }
 }
