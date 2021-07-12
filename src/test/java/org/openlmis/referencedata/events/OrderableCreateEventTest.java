@@ -13,11 +13,14 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-package org.openlmis.referencedata.domain;
+package org.openlmis.referencedata.events;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openlmis.referencedata.domain.Orderable;
+import org.openlmis.referencedata.events.OrderableCreateEvent;
+import org.openlmis.referencedata.events.ProductsObserver;
 import org.openlmis.referencedata.testbuilder.OrderableDataBuilder;
 
 import static org.junit.Assert.assertEquals;

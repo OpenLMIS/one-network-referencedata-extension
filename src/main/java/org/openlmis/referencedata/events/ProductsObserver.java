@@ -13,33 +13,25 @@
  * http://www.gnu.org/licenses.  For additional information contact info@OpenLMIS.org. 
  */
 
-package org.openlmis.referencedata.domain;
+package org.openlmis.referencedata.events;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openlmis.referencedata.testbuilder.OrderableDataBuilder;
+import org.openlmis.referencedata.domain.Orderable;
 
-import static org.junit.Assert.assertEquals;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OrderableUpdateEventTest {
+public class ProductsObserver implements PropertyChangeListener {
+  private Orderable orderable;
 
-  private Orderable generateInstance() {
-    return new OrderableDataBuilder().build();
+  public void propertyChange(PropertyChangeEvent evt) {
+    this.setProduct((Orderable) evt.getNewValue());
   }
 
-  @Test
-  public void shouldCreateNotificationAfterNewOrderableUpdated() {
+  public Orderable getProduct() {
+    return orderable;
+  }
 
-    Orderable orderable = generateInstance();
-
-    OrderableUpdateEvent observable = new OrderableUpdateEvent();
-    ProductsObserver observer = new ProductsObserver();
-
-    observable.addPropertyChangeListener(observer);
-
-    observable.process(orderable);
-    assertEquals(observer.getProduct(), orderable);
+  public void setProduct(Orderable orderable) {
+    this.orderable = orderable;
   }
 }
