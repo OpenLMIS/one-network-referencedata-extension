@@ -36,7 +36,6 @@ public class OrderableCreateEvent implements OrderableCreatePostProcessor {
   @Override
   public void process(Orderable orderable) {
     logger.info("OrderableCreateEvent - processing");
-    System.out.println("OrderableCreateEvent - processing");
     support.firePropertyChange("orderableCreate", this.orderable, orderable);
     this.orderable = orderable;
   }
