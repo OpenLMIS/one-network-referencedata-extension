@@ -17,32 +17,25 @@ package org.openlmis.referencedata.events;
 
 import org.openlmis.referencedata.domain.Orderable;
 import org.openlmis.referencedata.extension.point.OrderableUpdatePostProcessor;
+import org.openlmis.referencedata.service.OrderableIntegrationDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 @Component(value = "OrderableUpdateEvent")
 public class OrderableUpdateEvent implements OrderableUpdatePostProcessor {
-  private Orderable orderable;
-  private PropertyChangeSupport support;
   private final Logger logger = LoggerFactory.getLogger(getClass());
+  private final OrderableIntegrationDataService orderableIntegrationDataService;
 
-  public OrderableUpdateEvent() {
-    support = new PropertyChangeSupport(this);
+  @Autowired
+  public OrderableUpdateEvent(OrderableIntegrationDataService orderableIntegrationDataService) {
+    this.orderableIntegrationDataService = orderableIntegrationDataService;
   }
 
   @Override
   public void process(Orderable orderable) {
     logger.info("OrderableUpdateEvent - processing");
-    support.firePropertyChange("orderableUpdate", this.orderable, orderable);
-    this.orderable = orderable;
-  }
-
-  public void addPropertyChangeListener(PropertyChangeListener pcl) {
-    logger.info("OrderableUpdateEvent - adding listener");
-    support.addPropertyChangeListener(pcl);
+    orderableIntegrationDataService.sendOrderable(orderable);
   }
 }

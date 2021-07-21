@@ -17,32 +17,29 @@ package org.openlmis.referencedata.events;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.referencedata.domain.Orderable;
-import org.openlmis.referencedata.events.OrderableUpdateEvent;
-import org.openlmis.referencedata.events.ProductsObserver;
-import org.openlmis.referencedata.testbuilder.OrderableDataBuilder;
-
-import static org.junit.Assert.assertEquals;
+import org.openlmis.referencedata.service.OrderableIntegrationDataService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderableUpdateEventTest {
 
-  private Orderable generateInstance() {
-    return new OrderableDataBuilder().build();
-  }
+  @Mock
+  private Orderable orderable;
+
+  @Mock
+  private OrderableIntegrationDataService orderableIntegrationDataService;
+
+  @InjectMocks
+  private OrderableUpdateEvent orderableUpdateEvent;
 
   @Test
-  public void shouldCreateNotificationAfterNewOrderableUpdated() {
-
-    Orderable orderable = generateInstance();
-
-    OrderableUpdateEvent observable = new OrderableUpdateEvent();
-    ProductsObserver observer = new ProductsObserver();
-
-    observable.addPropertyChangeListener(observer);
-
-    observable.process(orderable);
-    assertEquals(observer.getProduct(), orderable);
+  public void shouldCallSendOrderableMethod() {
+    orderableUpdateEvent.process(orderable);
+    Mockito.verify(orderableIntegrationDataService, Mockito.atLeastOnce())
+            .sendOrderable(orderable);
   }
 }

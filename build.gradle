@@ -94,11 +94,16 @@ jacocoTestReport {
         html.enabled true
         csv.enabled false
     }
-
   additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
 
 }
 
+test {
+    testLogging {
+        events 'started', 'passed'
+        exceptionFormat = 'full'
+    }
+}
 def time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 time.setTimeZone(TimeZone.getTimeZone("GMT"))
 
