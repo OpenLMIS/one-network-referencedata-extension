@@ -17,6 +17,7 @@ package org.openlmis.referencedata.events;
 
 import org.openlmis.referencedata.domain.Orderable;
 import org.openlmis.referencedata.extension.point.OrderableUpdatePostProcessor;
+import org.openlmis.referencedata.service.OrderableIntegrationDataException;
 import org.openlmis.referencedata.service.OrderableIntegrationDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,10 @@ public class OrderableUpdateEvent implements OrderableUpdatePostProcessor {
   @Override
   public void process(Orderable orderable) {
     logger.info("OrderableUpdateEvent - processing");
-    orderableIntegrationDataService.sendOrderable(orderable);
+    try {
+      orderableIntegrationDataService.sendOrderable(orderable);
+    } catch (OrderableIntegrationDataException ex) {
+      logger.error("Error during send updated orderable", ex);
+    }
   }
 }

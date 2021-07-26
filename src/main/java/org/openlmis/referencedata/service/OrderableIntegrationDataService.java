@@ -17,21 +17,17 @@ package org.openlmis.referencedata.service;
 
 import org.openlmis.referencedata.domain.Orderable;
 import org.openlmis.referencedata.dto.OrderableDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class OrderableIntegrationDataService {
-
-  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Value("${service.url}")
   private String referencedataUrl;
@@ -49,30 +45,25 @@ public class OrderableIntegrationDataService {
    * Send an orderable to one-network-integration-service.
    *
    * @param orderable object
-   * @return true if success, false if failed.
    */
-  public boolean sendOrderable(Orderable orderable) {
+  public void sendOrderable(Orderable orderable) throws OrderableIntegrationDataException {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(authService.obtainAccessToken());
     OrderableDto orderableDto = OrderableDto.newInstance(orderable);
     String url = referencedataUrl + SERVICE_URL;
 
     try {
-      headers.setBearerAuth(authService.obtainAccessToken());
       restTemplate.exchange(
               RequestHelper.createUri(url),
               HttpMethod.POST,
               new HttpEntity<>(orderableDto, headers),
               Object.class);
 
-    } catch (HttpStatusCodeException ex) {
-      logger.error(
-              "Unable to send orderable to one-network-integration-service. "
-                      + "Error code: {}, response message: {}",
-              ex.getStatusCode(), ex.getMessage()
+    } catch (RestClientException ex) {
+      throw new OrderableIntegrationDataException(
+              "Unable to send orderable to one-network-integration-service.", ex
       );
-      return false;
     }
-    return true;
   }
 }

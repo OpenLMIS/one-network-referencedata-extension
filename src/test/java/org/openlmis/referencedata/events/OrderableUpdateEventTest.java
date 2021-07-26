@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openlmis.referencedata.domain.Orderable;
+import org.openlmis.referencedata.service.OrderableIntegrationDataException;
 import org.openlmis.referencedata.service.OrderableIntegrationDataService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +38,7 @@ public class OrderableUpdateEventTest {
   private OrderableUpdateEvent orderableUpdateEvent;
 
   @Test
-  public void shouldCallSendOrderableMethod() {
+  public void shouldCallSendOrderableMethod() throws OrderableIntegrationDataException {
     orderableUpdateEvent.process(orderable);
     Mockito.verify(orderableIntegrationDataService, Mockito.atLeastOnce())
             .sendOrderable(orderable);
